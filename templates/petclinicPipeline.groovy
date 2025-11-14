@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/spring-projects/spring-petclinic.git'
+                git branch: 'main', url: 'https://github.com/RanaSalem2412/spring-petclinic.git'
             }
         }
 
@@ -26,6 +26,12 @@ pipeline {
             }
         }
 
+        stage('Trivy Image Scan') {
+            steps {
+                trivyScan()
+            }
+        }
+
         stage('Push to Nexus') {
             steps {
                 nexusDeploy()
@@ -33,4 +39,5 @@ pipeline {
         }
     }
 }
+
 
