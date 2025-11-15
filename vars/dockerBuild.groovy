@@ -12,8 +12,8 @@ def call() {
 
     // Push to Nexus Docker registry
     withCredentials([usernamePassword(credentialsId: 'nexus-admin', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-        def NEXUS_URL = "my-nexus-domain:8083"  // عدلي حسب عنوانك
-        def NEXUS_REPO = "repository/docker-repo"
+        def NEXUS_URL = "44.203.150.173:8082"  // عدلي حسب عنوانك
+        def NEXUS_REPO = "repository/docker-hosted"
 
         // Tag image for Nexus
         sh "docker tag $DOCKER_USER/petclinic:latest $NEXUS_URL/$NEXUS_REPO/petclinic:latest"
