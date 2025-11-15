@@ -1,19 +1,31 @@
 def call() {
-    node {
-        stage('Build with Maven') {
-            mavenBuild()
-        }
-        stage('SonarQube Scan') {
-            sonarScan()
-        }
-        stage('Trivy Scan') {
-            trivyScan()
-        }
-        stage('Deploy to Nexus') {
-            nexusDeploy()
-        }
-        stage('Docker Build & Push') {
-            dockerBuild()
+    pipeline {
+        agent any
+        stages {
+            stage('Build') {
+                steps {
+                    echo "Building the project..."
+                    mavenBuild()
+                }
+            }
+            stage('Docker') {
+                steps {
+                    echo "Building Docker image..."
+                    dockerBuild()
+                }
+            }
+            stage('SonarQube Scan') {
+                steps {
+                    echo "Running SonarQube scan..."
+                    sonarScan()
+                }
+            }
+            stage('Deploy') {
+                steps {
+                    echo "Deploying to Nexus..."
+                    nexusDeploy()
+                }
+            }
         }
     }
 }
