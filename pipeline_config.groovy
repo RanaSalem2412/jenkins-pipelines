@@ -1,11 +1,4 @@
+// pipeline_config.groovy
 pipeline {
-    agent { label 'docker-agent' }
-
-    template 'petclinicPipeline'
-
-    libraries {
-        jenkins-pipelines {
-            version 'main'
-        }
-    }
+    template 'petclinicPipeline'  // الاسم نفس ملف القالب في templates بدون .groovy
 }
