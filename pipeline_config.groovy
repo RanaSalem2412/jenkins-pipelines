@@ -1,4 +1,4 @@
-// pipeline_config.groovy
+@Library('jenkins-pipelines') _
 pipeline {
-    template 'petclinicPipeline'  // الاسم نفس ملف القالب في templates بدون .groovy
+    template('petclinicPipeline')
 }
