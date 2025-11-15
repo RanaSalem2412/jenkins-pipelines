@@ -1,38 +1,41 @@
-stages {
-    stage('Checkout') {
-        steps {
-            git branch: 'main', url: 'https://github.com/RanaSalem2412/spring-petclinic.git'
-        }
-    }
+pipeline {
+   agent { label 'docker-agent' }
 
-    stage('Maven Build') {
-        steps {
-            mavenBuild()
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/RanaSalem2412/spring-petclinic.git'
+            }
         }
-    }
 
-    stage('SonarQube Scan') {
-        steps {
-            sonarScan()
+        stage('Maven Build') {
+            steps {
+                mavenBuild()
+            }
         }
-    }
 
-    stage('Build Docker Image') {
-        steps {
-            dockerBuild()
+        stage('SonarQube Scan') {
+            steps {
+                sonarScan()
+            }
         }
-    }
 
-    stage('Trivy Image Scan') {
-        steps {
-            trivyScan()
+        stage('Build Docker Image') {
+            steps {
+                dockerBuild()
+            }
         }
-    }
 
-    stage('Push to Nexus') {
-        steps {
-            nexusDeploy()
+        stage('Trivy Image Scan') {
+            steps {
+                trivyScan()
+            }
+        }
+
+        stage('Push to Nexus') {
+            steps {
+                nexusDeploy()
+            }
         }
     }
 }
-
