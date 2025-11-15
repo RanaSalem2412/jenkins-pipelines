@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'docker-agent' }
 
-    template 'templates/petclinicPipeline.groovy'
+    template 'petclinicPipeline'
 
     libraries {
         jenkins-pipelines {
