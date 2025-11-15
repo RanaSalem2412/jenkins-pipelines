@@ -1,25 +1,17 @@
 libraries {
-    // اسم الـ template اللي جايب مراحل pipeline
     template = "petclinicPipeline"
-
-    // لو عندك libraries تانية اكتبيها
     merge = true
 }
 
 globals {
-    // Maven
     maven_opts = "-B -DskipTests=false"
-
-    // SonarQube
     sonar_project_key = "spring-petclinic"
-    sonar_cred_id = "sonar-token"             // ID من Jenkins
+    sonar_cred_id = "sonar-token"
 
-    // Nexus
     nexus_repo = "maven-releases"
-    nexus_cred_id = "nexus-creds"             // ID من Jenkins
+    nexus_cred_id = "nexus-creds"
 
-    // Docker
     docker_registry = "nexus.example.com:8083"
     docker_repo = "petclinic"
-    docker_cred_id = "docker-creds"           // ID من Jenkins
+    docker_cred_id = "docker-creds"
 }
