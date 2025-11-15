@@ -2,13 +2,13 @@ import org.boozallen.plugins.jte.init.governance.config.dsl.PipelineConfiguratio
 
 PipelineConfigurationDsl.configure(this) {
 
-    // المكتبة اللي هتستخدم
+    // المكتبة المشتركة
     library('jenkins-pipelines') {
         default_version = 'main'
     }
 
     // Templates اللي الـ pipeline هيستخدمها
     templates = [
-        'petclinicPipeline'  
+        'petclinicPipeline'
     ]
 }
