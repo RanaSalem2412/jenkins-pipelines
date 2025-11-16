@@ -5,7 +5,7 @@ def call() {
             stage('Build') {
                 steps {
                     echo "Building the project..."
-                    mavenBuild()
+                    mavenBuild(globals)
                 }
             }
             stage('Docker') {
