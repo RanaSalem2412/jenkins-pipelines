@@ -1,31 +1,36 @@
-def call() {
+def call(globals) {   // تمرير globals
     pipeline {
-        agent any
+        agent { label 'docker-agent' }
+
         stages {
             stage('Build') {
                 steps {
                     echo "Building the project..."
-                    mavenBuild(globals)
+                    mavenBuild(globals)  // ينفذ mvn clean install/deploy
                 }
             }
-            stage('Docker') {
-                steps {
-                    echo "Building Docker image..."
-                    dockerBuild()
-                }
-            }
+
             stage('SonarQube Scan') {
                 steps {
                     echo "Running SonarQube scan..."
-                    sonarScan()
+                    sonarScan(globals)  // ينفذ تحليل SonarQube
                 }
             }
-            stage('Deploy') {
+
+            stage('Docker Build') {
                 steps {
-                    echo "Deploying to Nexus..."
-                    nexusDeploy()
+                    echo "Building Docker image..."
+                    dockerBuild(globals)  // ينشئ صورة Docker
+                }
+            }
+
+            stage('Push Docker Image') {
+                steps {
+                    echo "Pushing Docker image to Nexus..."
+                    dockerPush(globals)  // يدفع الصورة للـ Nexus/Docker registry
                 }
             }
         }
     }
 }
+
