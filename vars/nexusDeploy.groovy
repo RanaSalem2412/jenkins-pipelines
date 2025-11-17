@@ -1,8 +1,8 @@
 def call(Map config = [:]) {
     def imageName = config?.imageName ?: 'myapp'
     def imageTag = config?.imageTag ?: 'latest'
-    def nexusHost = config?.nexusHost ?: '44.203.150.173'    // الـ IP أو hostname
-    def nexusPort = config?.nexusPort ?: '8082'             // الـ HTTP connector port
+    def nexusHost = config?.nexusHost ?: '44.203.150.173'
+    def nexusPort = config?.nexusPort ?: '8082'
     def nexusRepo = config?.nexusRepo ?: 'docker-hosted'
     def credentialsId = config?.credentialsId ?: 'nexus-admin'
 
@@ -23,10 +23,9 @@ def call(Map config = [:]) {
                 usernameVariable: 'NEXUS_USER',
                 passwordVariable: 'NEXUS_PASS'
             )]) {
-                // إضافة --tls-verify=false لأن HTTP registry
                 sh """
                     echo \$NEXUS_PASS | docker login -u \$NEXUS_USER --password-stdin ${nexusHost}:${nexusPort}
-                    docker push --tls-verify=false ${nexusImage} || echo "⚠️ Push failed, continuing pipeline"
+                    docker push ${nexusImage} || echo "⚠️ Push failed, continuing pipeline"
                     docker logout ${nexusHost}:${nexusPort}
                 """
             }
@@ -37,3 +36,4 @@ def call(Map config = [:]) {
     // إزالة الصورة من الجهاز المحلي
     sh "docker rmi ${nexusImage} || true"
 }
+
