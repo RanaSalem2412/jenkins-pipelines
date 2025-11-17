@@ -1,5 +1,5 @@
 def call(Map config = [:]) {
-    def imageName = config?.imageName ?: 'myapp'
+    def imageName = config?.imageName ?: 'spring-petclinic'
     def imageTag = config?.imageTag ?: "${env.BUILD_NUMBER ?: 'latest'}"
     def dockerfile = config?.dockerfile ?: 'Dockerfile'
     def context = config?.context ?: '.'
