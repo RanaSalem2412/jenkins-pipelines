@@ -26,11 +26,12 @@ def call(globals) {   // تمرير globals
                 steps {
                     echo "Building Docker image..."
                     script {
+                        // يبني الصورة ويخزن الاسم في متغير
                         def builtImage = dockerBuild([
                             imageName: env.IMAGE_NAME,
                             imageTag: env.IMAGE_TAG
                         ])
-                        // Tag as latest
+                        // عمل tag كـ latest
                         sh "docker tag ${builtImage} ${env.IMAGE_NAME}:latest"
                         echo "Built image: ${builtImage} and also tagged as ${env.IMAGE_NAME}:latest"
                     }
@@ -47,9 +48,18 @@ def call(globals) {   // تمرير globals
             stage('Push Docker Image') {
                 steps {
                     echo "Pushing Docker image to Nexus..."
-                    dockerPush(globals)  // يدفع الصورة للـ Nexus/Docker registry
+                    script {
+                        dockerPush([
+                            imageName: env.IMAGE_NAME,
+                            imageTag: env.IMAGE_TAG,
+                            nexusUrl: globals.nexusUrl,
+                            nexusRepo: globals.nexusRepo,
+                            credentialsId: globals.credentialsId
+                        ])
+                    }
                 }
             }
         }
     }
 }
+
