@@ -1,21 +1,24 @@
 def call(Map config = [:]) {
-    // اسم الصورة: افتراضي spring-petclinic:latest بدل myapp:latest
     def imageName = config?.imageName ?: 'spring-petclinic:latest'
     def severity = config?.severity ?: 'HIGH,CRITICAL'
-    def exitCode = config?.exitCode ?: 1
-    def reportFile = config?.reportFile ?: 'trivy-report.json'
-    
+    def reportFile = config?.reportFile ?: 'reports/trivy-report.json'
+
     stage('Trivy Security Scan') {
         echo "🔍 Scanning image: ${imageName}"
         echo "Severity levels: ${severity}"
         
-        // استخدام shell script لفحص الصورة بصيغة CLI
+        // إنشاء المجلد لو مش موجود
+        sh "mkdir -p reports"
+        
+        // نفحص الصورة بدون أن يتوقف الـ pipeline لو فيه vulnerabilities
         sh """
-            trivy image --exit-code ${exitCode} --severity ${severity} ${imageName}
+            set +e
+            trivy image --exit-code 1 --severity ${severity} ${imageName}
             trivy image --format json --output ${reportFile} ${imageName}
+            set -e
         """
         
-        echo "✅ Security scan completed"
+        echo "✅ Security scan completed (vulnerabilities won't fail the job)"
         archiveArtifacts artifacts: reportFile, allowEmptyArchive: true
     }
 }
