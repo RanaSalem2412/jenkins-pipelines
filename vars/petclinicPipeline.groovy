@@ -2,6 +2,11 @@ def call(globals) {   // تمرير globals
     pipeline {
         agent { label 'docker-agent' }
 
+        environment {
+            IMAGE_NAME = 'spring-petclinic'
+            IMAGE_TAG  = "${env.BUILD_NUMBER ?: 'latest'}"
+        }
+
         stages {
             stage('Build') {
                 steps {
@@ -20,33 +25,31 @@ def call(globals) {   // تمرير globals
             stage('Docker Build') {
                 steps {
                     echo "Building Docker image..."
-                    // بناء الصورة باسم spring-petclinic مع tag build number
-                    def builtImage = dockerBuild([
-                        imageName: 'spring-petclinic', 
-                        imageTag: "${env.BUILD_NUMBER ?: 'latest'}"
-                    ])
-                    
-                    // عمل tag لـ latest
-                    sh "docker tag ${builtImage} spring-petclinic:latest"
-                    echo "Built image: ${builtImage} and also tagged as spring-petclinic:latest"
+                    script {
+                        def builtImage = dockerBuild([
+                            imageName: env.IMAGE_NAME,
+                            imageTag: env.IMAGE_TAG
+                        ])
+                        // Tag as latest
+                        sh "docker tag ${builtImage} ${env.IMAGE_NAME}:latest"
+                        echo "Built image: ${builtImage} and also tagged as ${env.IMAGE_NAME}:latest"
+                    }
                 }
             }
 
             stage('Trivy Scan') {
                 steps {
                     echo "Scanning Docker image for vulnerabilities..."
-                    sh "trivy image --exit-code 1 --severity HIGH,CRITICAL spring-petclinic:latest --format json --output trivy-report.json"
+                    trivyScan(globals)  // يفحص الصورة بحثاً عن ثغرات أمنية
                 }
             }
 
             stage('Push Docker Image') {
                 steps {
                     echo "Pushing Docker image to Nexus..."
-                    dockerPush([image: "spring-petclinic:latest"])
+                    dockerPush(globals)  // يدفع الصورة للـ Nexus/Docker registry
                 }
             }
         }
     }
 }
-
-
