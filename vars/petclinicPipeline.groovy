@@ -17,7 +17,7 @@ def call(globals) {   // تمرير globals
             stage('Docker Build') {
                 steps {
                     echo "Building Docker image..."
-                    dockerBuild(globals)  // ينشئ صورة Docker
+                    dockerBuild()  // ينشئ صورة Docker
                 }
             }
             stage('Trivy Scan') {
