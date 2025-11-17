@@ -51,7 +51,8 @@ def call(globals) {   // تمرير globals
                         nexusDeploy([
                             imageName: env.IMAGE_NAME,
                             imageTag: env.IMAGE_TAG,
-                            nexusUrl: '44.203.150.173:8081',  // بدون http://
+                            nexusHost: '44.203.150.173',
+                            nexusPort: '8082',
                             nexusRepo: 'docker-hosted',
                             credentialsId: 'nexus-admin'
                         ])
