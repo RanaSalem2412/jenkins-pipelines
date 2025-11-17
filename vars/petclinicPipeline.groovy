@@ -49,12 +49,12 @@ def call(globals) {   // تمرير globals
                 steps {
                     echo "Pushing Docker image to Nexus..."
                     script {
-                        dockerPush([
+                        nexusDeploy([
                             imageName: env.IMAGE_NAME,
                             imageTag: env.IMAGE_TAG,
-                            nexusUrl: globals.nexusUrl,
-                            nexusRepo: globals.nexusRepo,
-                            credentialsId: globals.credentialsId
+                            nexusUrl: 'http://44.203.150.173:8081',
+                            nexusRepo: 'docker-hosted',
+                            credentialsId: 'nexus-admin'
                         ])
                     }
                 }
