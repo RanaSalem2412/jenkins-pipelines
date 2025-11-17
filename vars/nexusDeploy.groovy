@@ -1,7 +1,7 @@
 def call(Map config = [:]) {
     def imageName = config?.imageName ?: 'myapp'
     def imageTag = config?.imageTag ?: 'latest'
-    def nexusUrl = config?.nexusUrl ?: 'http://44.203.150.173:8081'
+    def nexusUrl = config?.nexusUrl ?: '44.203.150.173:8081' // بدون http://
     def nexusRepo = config?.nexusRepo ?: 'docker-hosted'
     def credentialsId = config?.credentialsId ?: 'nexus-admin'
 
@@ -36,4 +36,3 @@ def call(Map config = [:]) {
     // إزالة الصورة من الجهاز المحلي
     sh "docker rmi ${nexusImage} || true"
 }
-
