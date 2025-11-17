@@ -1,12 +1,13 @@
 def call(Map config = [:]) {
     def imageName = config?.imageName ?: 'myapp'
     def imageTag = config?.imageTag ?: 'latest'
-    def nexusUrl = config?.nexusUrl ?: '44.203.150.173:8082' // بدون http://
+    def nexusHost = config?.nexusHost ?: '44.203.150.173'    // الـ IP أو hostname
+    def nexusPort = config?.nexusPort ?: '8082'             // الـ HTTP connector port
     def nexusRepo = config?.nexusRepo ?: 'docker-hosted'
     def credentialsId = config?.credentialsId ?: 'nexus-admin'
 
     def localImage = "${imageName}:${imageTag}"
-    def nexusImage = "${nexusUrl}/${nexusRepo}/${imageName}:${imageTag}"
+    def nexusImage = "${nexusHost}:${nexusPort}/${nexusRepo}/${imageName}:${imageTag}"
 
     stage('Tag for Nexus') {
         echo "🏷️ Tagging image: ${nexusImage}"
@@ -16,17 +17,17 @@ def call(Map config = [:]) {
     stage('Push to Nexus') {
         echo "📤 Pushing to Nexus: ${nexusImage}"
 
-        // لو push فشل، ما يوقفش الـ pipeline
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
             withCredentials([usernamePassword(
                 credentialsId: credentialsId,
                 usernameVariable: 'NEXUS_USER',
                 passwordVariable: 'NEXUS_PASS'
             )]) {
+                // إضافة --tls-verify=false لأن HTTP registry
                 sh """
-                    echo \$NEXUS_PASS | docker login -u \$NEXUS_USER --password-stdin ${nexusUrl}
-                    docker push ${nexusImage} || echo "⚠️ Push failed, continuing pipeline"
-                    docker logout ${nexusUrl}
+                    echo \$NEXUS_PASS | docker login -u \$NEXUS_USER --password-stdin ${nexusHost}:${nexusPort}
+                    docker push --tls-verify=false ${nexusImage} || echo "⚠️ Push failed, continuing pipeline"
+                    docker logout ${nexusHost}:${nexusPort}
                 """
             }
             echo "✅ Attempted push to Nexus (pipeline will continue even if it fails)"
