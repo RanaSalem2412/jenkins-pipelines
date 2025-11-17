@@ -1,11 +1,14 @@
-def call(Map config) {
-    def imageName = config.imageName
-    def imageTag = config.imageTag ?: 'latest'
-    def nexusUrl = config.nexusUrl
-    def nexusRepo = config.nexusRepo ?: 'docker-hosted'
-    def credentialsId = config.credentialsId ?: 'nexus-credentials'
+def call(Map config = [:]) {
+    def imageName = config?.imageName ?: 'myapp'
+    def imageTag = config?.imageTag ?: 'latest'
+    def nexusUrl = config?.nexusUrl
+    def nexusRepo = config?.nexusRepo ?: 'docker-hosted'
+    def credentialsId = config?.credentialsId ?: 'nexus-credentials'
     
-    // بناء الـ full image name
+    if (!nexusUrl) {
+        error("❌ nexusUrl is required!")
+    }
+    
     def localImage = "${imageName}:${imageTag}"
     def nexusImage = "${nexusUrl}/${nexusRepo}/${imageName}:${imageTag}"
     
@@ -32,8 +35,5 @@ def call(Map config) {
         echo "✅ Image pushed successfully to Nexus"
     }
     
-    // تنظيف
-    sh """
-        docker rmi ${nexusImage} || true
-    """
+    sh "docker rmi ${nexusImage} || true"
 }
