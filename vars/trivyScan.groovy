@@ -1,5 +1,6 @@
 def call(Map config = [:]) {
-    def imageName = config?.imageName ?: 'myapp:latest'
+    // اسم الصورة: افتراضي spring-petclinic:latest بدل myapp:latest
+    def imageName = config?.imageName ?: 'spring-petclinic:latest'
     def severity = config?.severity ?: 'HIGH,CRITICAL'
     def exitCode = config?.exitCode ?: 1
     def reportFile = config?.reportFile ?: 'trivy-report.json'
@@ -8,6 +9,7 @@ def call(Map config = [:]) {
         echo "🔍 Scanning image: ${imageName}"
         echo "Severity levels: ${severity}"
         
+        // استخدام shell script لفحص الصورة بصيغة CLI
         sh """
             trivy image --exit-code ${exitCode} --severity ${severity} ${imageName}
             trivy image --format json --output ${reportFile} ${imageName}
@@ -17,3 +19,4 @@ def call(Map config = [:]) {
         archiveArtifacts artifacts: reportFile, allowEmptyArchive: true
     }
 }
+
