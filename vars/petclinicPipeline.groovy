@@ -26,7 +26,6 @@ def call(globals) {   // تمرير globals
                 steps {
                     echo "Building Docker image..."
                     script {
-                        // يبني الصورة ويخزن الاسم في متغير
                         def builtImage = dockerBuild([
                             imageName: env.IMAGE_NAME,
                             imageTag: env.IMAGE_TAG
@@ -52,7 +51,7 @@ def call(globals) {   // تمرير globals
                         nexusDeploy([
                             imageName: env.IMAGE_NAME,
                             imageTag: env.IMAGE_TAG,
-                            nexusUrl: 'http://44.203.150.173:8081',
+                            nexusUrl: '44.203.150.173:8081',  // بدون http://
                             nexusRepo: 'docker-hosted',
                             credentialsId: 'nexus-admin'
                         ])
