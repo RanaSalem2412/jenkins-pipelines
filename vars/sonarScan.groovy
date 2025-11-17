@@ -8,8 +8,9 @@ def call(Map config = [:]) {
             sonar:sonar \
             -Dsonar.projectKey=spring-petclinic \
             -Dsonar.projectName=spring-petclinic \
-            -Dsonar.host.url=http://44.203.150.173:9000
+            -Dsonar.host.url=http://44.203.150.173:9000 \
             -Dsonar.login=$SONAR_TOKEN
         '''
     }
 }
+
