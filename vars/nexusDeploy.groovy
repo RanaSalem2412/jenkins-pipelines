@@ -1,7 +1,7 @@
 def call(Map config = [:]) {
     def imageName = config?.imageName ?: 'myapp'
     def imageTag = config?.imageTag ?: 'latest'
-    def nexusUrl = config?.nexusUrl ?: '44.203.150.173:8081/repository/docker-hosted' // بدون http://
+    def nexusUrl = config?.nexusUrl ?: '44.203.150.173:8082' // بدون http://
     def nexusRepo = config?.nexusRepo ?: 'docker-hosted'
     def credentialsId = config?.credentialsId ?: 'nexus-admin'
 
