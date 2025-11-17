@@ -1,6 +1,39 @@
-def call() {
-    withCredentials([usernamePassword(credentialsId: 'nexus-admin', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-        sh "mvn deploy -Dusername=$NEXUS_USER -Dpassword=$NEXUS_PASS"
+def call(Map config) {
+    def imageName = config.imageName
+    def imageTag = config.imageTag ?: 'latest'
+    def nexusUrl = config.nexusUrl
+    def nexusRepo = config.nexusRepo ?: 'docker-hosted'
+    def credentialsId = config.credentialsId ?: 'nexus-credentials'
+    
+    // بناء الـ full image name
+    def localImage = "${imageName}:${imageTag}"
+    def nexusImage = "${nexusUrl}/${nexusRepo}/${imageName}:${imageTag}"
+    
+    stage('Tag for Nexus') {
+        echo "🏷️ Tagging image: ${nexusImage}"
+        sh "docker tag ${localImage} ${nexusImage}"
     }
+    
+    stage('Push to Nexus') {
+        echo "📤 Pushing to Nexus: ${nexusImage}"
+        
+        withCredentials([usernamePassword(
+            credentialsId: credentialsId,
+            usernameVariable: 'NEXUS_USER',
+            passwordVariable: 'NEXUS_PASS'
+        )]) {
+            sh """
+                echo \$NEXUS_PASS | docker login -u \$NEXUS_USER --password-stdin ${nexusUrl}
+                docker push ${nexusImage}
+                docker logout ${nexusUrl}
+            """
+        }
+        
+        echo "✅ Image pushed successfully to Nexus"
+    }
+    
+    // تنظيف
+    sh """
+        docker rmi ${nexusImage} || true
+    """
 }
-
