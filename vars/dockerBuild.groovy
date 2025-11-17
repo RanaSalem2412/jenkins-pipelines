@@ -1,28 +1,17 @@
-def call() {
-    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-        // Build image locally
-        sh "docker build -t $DOCKER_USER/petclinic:latest ."
-
-        // Push to Docker Hub
+def call(Map config) {
+    def imageName = config.imageName ?: 'myapp'
+    def imageTag = config.imageTag ?: "${env.BUILD_NUMBER}"
+    def dockerfile = config.dockerfile ?: 'Dockerfile'
+    def context = config.context ?: '.'
+    
+    stage('Build Docker Image') {
+        echo "🔨 Building Docker image: ${imageName}:${imageTag}"
         sh """
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker push $DOCKER_USER/petclinic:latest
+            docker build -f ${dockerfile} -t ${imageName}:${imageTag} ${context}
         """
+        echo "✅ Image built successfully: ${imageName}:${imageTag}"
     }
-
-    // Push to Nexus Docker registry
-    withCredentials([usernamePassword(credentialsId: 'nexus-admin', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-        def NEXUS_URL = "44.203.150.173:8082"  // عدلي حسب عنوانك
-        def NEXUS_REPO = "repository/docker-hosted"
-
-        // Tag image for Nexus
-        sh "docker tag $DOCKER_USER/petclinic:latest $NEXUS_URL/$NEXUS_REPO/petclinic:latest"
-
-        // Login & push to Nexus
-        sh """
-            docker login $NEXUS_URL -u $NEXUS_USER -p $NEXUS_PASS
-            docker push $NEXUS_URL/$NEXUS_REPO/petclinic:latest
-        """
-    }
+    
+    // إرجاع اسم الـ image الكامل للاستخدام في المراحل التالية
+    return "${imageName}:${imageTag}"
 }
-
