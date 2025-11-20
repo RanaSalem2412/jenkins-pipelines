@@ -10,12 +10,12 @@ def call(Map config = [:]) {
     def nexusImage = "${nexusHost}:${nexusPort}/${nexusRepo}/${imageName}:${imageTag}"
 
     stage('Tag for Nexus') {
-        echo "🏷️ Tagging image: ${nexusImage}"
+        echo " Tagging image: ${nexusImage}"
         sh "docker tag ${localImage} ${nexusImage}"
     }
 
     stage('Push to Nexus') {
-        echo "📤 Pushing to Nexus: ${nexusImage}"
+        echo " Pushing to Nexus: ${nexusImage}"
 
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
             withCredentials([usernamePassword(
@@ -25,15 +25,15 @@ def call(Map config = [:]) {
             )]) {
                 sh """
                     echo \$NEXUS_PASS | docker login -u \$NEXUS_USER --password-stdin ${nexusHost}:${nexusPort}
-                    docker push ${nexusImage} || echo "⚠️ Push failed, continuing pipeline"
+                    docker push ${nexusImage} || echo " Push failed, continuing pipeline"
                     docker logout ${nexusHost}:${nexusPort}
                 """
             }
-            echo "✅ Attempted push to Nexus (pipeline will continue even if it fails)"
+            echo " Attempted push to Nexus (pipeline will continue even if it fails)"
         }
     }
 
-    // إزالة الصورة من الجهاز المحلي
+ 
     sh "docker rmi ${nexusImage} || true"
 }
 
