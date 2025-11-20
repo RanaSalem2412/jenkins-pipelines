@@ -4,13 +4,13 @@ def call(Map config = [:]) {
     def reportFile = config?.reportFile ?: 'reports/trivy-report.json'
 
     stage('Trivy Security Scan') {
-        echo "🔍 Scanning image: ${imageName}"
+        echo " Scanning image: ${imageName}"
         echo "Severity levels: ${severity}"
         
-        // إنشاء المجلد لو مش موجود
+      
         sh "mkdir -p reports"
         
-        // نفحص الصورة بدون أن يتوقف الـ pipeline لو فيه vulnerabilities
+        
         sh """
             set +e
             trivy image --exit-code 1 --severity ${severity} ${imageName}
@@ -18,7 +18,7 @@ def call(Map config = [:]) {
             set -e
         """
         
-        echo "✅ Security scan completed (vulnerabilities won't fail the job)"
+        echo " Security scan completed (vulnerabilities won't fail the job)"
         archiveArtifacts artifacts: reportFile, allowEmptyArchive: true
     }
 }
