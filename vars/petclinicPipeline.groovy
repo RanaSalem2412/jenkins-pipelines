@@ -1,4 +1,4 @@
-def call(globals) {   // تمرير globals
+def call(globals) {   
     pipeline {
         agent { label 'docker-agent' }
 
@@ -18,7 +18,7 @@ def call(globals) {   // تمرير globals
             stage('SonarQube Scan') {
                 steps {
                     echo "Running SonarQube scan..."
-                    sonarScan(globals)  // ينفذ تحليل SonarQube
+                    sonarScan(globals)  
                 }
             }
 
@@ -30,7 +30,7 @@ def call(globals) {   // تمرير globals
                             imageName: env.IMAGE_NAME,
                             imageTag: env.IMAGE_TAG
                         ])
-                        // عمل tag كـ latest
+                        
                         sh "docker tag ${builtImage} ${env.IMAGE_NAME}:latest"
                         echo "Built image: ${builtImage} and also tagged as ${env.IMAGE_NAME}:latest"
                     }
@@ -40,7 +40,7 @@ def call(globals) {   // تمرير globals
             stage('Trivy Scan') {
                 steps {
                     echo "Scanning Docker image for vulnerabilities..."
-                    trivyScan(globals)  // يفحص الصورة بحثاً عن ثغرات أمنية
+                    trivyScan(globals)  
                 }
             }
 
