@@ -5,14 +5,14 @@ def call(Map config = [:]) {
     def context = config?.context ?: '.'
 
     stage('Build Docker Image') {
-        echo "🔨 Building Docker image: ${imageName}:${imageTag}"
+        echo " Building Docker image: ${imageName}:${imageTag}"
         sh """
             docker build -f ${dockerfile} -t ${imageName}:${imageTag} ${context}
         """
-        echo "✅ Image built successfully: ${imageName}:${imageTag}"
+        echo " Image built successfully: ${imageName}:${imageTag}"
 
-        // إضافة Tag باسم latest
-        echo "🏷️ Tagging Docker image as ${imageName}:latest"
+        
+        echo " Tagging Docker image as ${imageName}:latest"
         sh "docker tag ${imageName}:${imageTag} ${imageName}:latest"
     }
 
